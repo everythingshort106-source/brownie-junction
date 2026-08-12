@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brownie Junction</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+html{scroll-behavior:smooth}
+body{background:#100b08;color:#eee;line-height:1.6}
+header{background:rgba(18,13,10,.97);backdrop-filter:blur(12px);color:#fff;padding:15px 6%;position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;z-index:1000;border-bottom:1px solid #3d2b21}
+.logo{font-size:26px;font-weight:bold;color:#ffbd3d}
+nav a{color:#ddd;text-decoration:none;margin-left:20px;font-size:15px}
+nav a:hover{color:#ffbd3d}
+.btn{display:inline-block;padding:12px 22px;background:#d97808;color:#fff;text-decoration:none;border-radius:9px;margin:7px;font-weight:bold;border:1px solid #e28a18;cursor:pointer;transition:.2s}
+.btn:hover{background:#f08a0b;transform:translateY(-1px)}
+section{padding:65px 8%;animation:fade .7s ease}
+h2{text-align:center;margin-bottom:32px;font-size:31px;color:#f0bd4b}
+.hero{padding:90px 20px;text-align:center;background:radial-gradient(circle at top,#3a2416 0,#1a100c 48%,#100b08 100%);color:white;border-bottom:1px solid #3b2a20}
+.hero h1{font-size:46px;margin-bottom:15px;color:#fff3dc}
+.hero p{font-size:18px;margin-bottom:25px;color:#bdb1a7}
+.cards,.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
+.card,.item{background:linear-gradient(145deg,#211712,#17100d);border:1px solid #443229;border-radius:14px;padding:20px;box-shadow:0 12px 35px rgba(0,0,0,.25);text-align:center}
+.card:hover,.item:hover{border-color:#8c5a1b;transform:translateY(-3px);transition:.2s}
+.card img,.item img{width:100%;height:180px;object-fit:cover;border-radius:10px}
+.price{font-size:22px;font-weight:bold;margin-top:8px;color:#f1bd45}
+#order,#payment{background:#15100d}
+#order form{max-width:600px;margin:auto;display:flex;flex-direction:column;gap:14px}
+#order input,#order select,#order textarea{padding:14px;border-radius:9px;border:1px solid #4a382d;background:#0f0b09;color:#fff;font-size:16px;width:100%;outline:none}
+#order input:focus,#order select:focus,#order textarea:focus{border-color:#c87812}
+#order textarea{height:120px;resize:none}
+.upi{color:#f1bd45;font-weight:bold}
+.muted{color:#8f8580}
+footer{background:#0d0907;color:#aaa;text-align:center;padding:28px;margin-top:20px;border-top:1px solid #33251e}
+@keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){header{padding:13px 4%;flex-wrap:wrap;gap:10px}.logo{font-size:23px}nav{width:100%;text-align:center}nav a{margin:0 7px;font-size:13px}.hero h1{font-size:34px}section{padding:50px 5%}}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">🍫 Brownie Junction</div>
+<nav>
+<a href="#">Home</a>
+<a href="#menu">Menu</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Fresh Homemade Brownies</h1>
+<p>Rich • Gooey • Freshly Baked • Made With Love ❤️</p>
+<a class="btn" href="#order">Order Now</a>
+<a class="btn" href="https://wa.me/917073364941?text=Hi%20Brownie%20Junction!%20I%20want%20to%20order%20brownies." target="_blank">💬 Order on WhatsApp</a>
+<a class="btn" href="#menu">View Menu</a>
+</section>
+
+<section id="about">
+<h2>About Brownie Junction</h2>
+<p style="text-align:center;max-width:700px;margin:auto;font-size:18px;color:#bdb3ac">
+Brownie Junction is a homemade brownie startup based in Jaipur.<br>
+Every brownie is freshly baked using premium chocolate and quality ingredients.
+Our mission is to deliver rich, delicious brownies made with love.
+</p>
+</section>
+
+<section id="gallery">
+<h2>Our Gallery</h2>
+<div class="gallery-grid">
+<div class="item"><img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600" alt="KitKat Brownie"><h3>KitKat Brownie</h3></div>
+<div class="item"><img src="https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=600" alt="Oreo Brownie"><h3>Oreo Brownie</h3></div>
+<div class="item"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600" alt="Triple Chocolate Brownie"><h3>Triple Chocolate</h3></div>
+<div class="item"><img src="brownie-exploded.png" alt="Brownie Exploded View"><h3>Brownie Exploded View</h3></div>
+</div>
+</section>
+
+<section id="menu">
+<h2>Our Full Menu</h2>
+<div class="cards">
+<div class="card"><h3>🍫 KitKat Brownie</h3><p class="price">₹140</p></div>
+<div class="card"><h3>🍪 Oreo Brownie</h3><p class="price">₹140</p></div>
+<div class="card"><h3>🍫 Double Chocolate</h3><p class="price">₹140</p></div>
+<div class="card"><h3>🍫 Triple Chocolate</h3><p class="price">₹150</p></div>
+
+<div class="card"><h3>🥭 Mango Brownie</h3><p class="price">₹169</p></div>
+</div>
+</section>
+
+<section id="order">
+<h2>Order Brownies</h2>
+<form id="orderForm">
+<input type="text" id="custName" placeholder="Your Name" required>
+<input type="tel" id="custPhone" placeholder="Mobile Number" required>
+<select id="itemSelect" required>
+<option value="">Select Brownie</option>
+<option value="KitKat Brownie|140">KitKat Brownie - ₹140</option>
+<option value="Oreo Brownie|140">Oreo Brownie - ₹140</option>
+<option value="Double Chocolate|140">Double Chocolate - ₹140</option>
+<option value="Triple Chocolate|150">Triple Chocolate - ₹150</option>
+<option value="Mango Brownie|169">Mango Brownie - ₹169</option>
+</select>
+<input type="number" id="custQty" placeholder="Quantity" min="1" required>
+<textarea id="custAddress" placeholder="Delivery Address" required></textarea>
+<button type="submit" class="btn">Place Order</button>
+</form>
+<p id="success" style="text-align:center;color:#57ca8c;font-weight:bold;margin-top:15px"></p>
+</section>
+
+<section id="contact">
+<h2>Connect With Us</h2>
+<div style="text-align:center">
+<a class="btn" href="tel:+917740922672">📞 Call Now</a>
+<a class="btn" href="https://instagram.com/brownie_junction.1" target="_blank">📷 Instagram</a>
+</div>
+</section>
+
+<section>
+<h2>Visit Us</h2>
+<p style="text-align:center;font-size:18px;color:#bdb3ac">Near Biyani College,<br>Sector 2, Vidyadhar Nagar,<br>Jaipur, Rajasthan</p>
+<div style="text-align:center">
+<a class="btn" href="https://maps.google.com/?q=Near+Biyani+College+Sector+2+Vidyadhar+Nagar+Jaipur" target="_blank">Open Google Maps</a>
+</div>
+</section>
+
+<section>
+<h2>Customer Reviews</h2>
+<div class="cards">
+<div class="card">⭐⭐⭐⭐⭐<p class="muted">Best homemade brownies in Jaipur. Fresh and delicious!</p></div>
+<div class="card">⭐⭐⭐⭐⭐<p class="muted">Soft, rich and full of chocolate. Highly recommended.</p></div>
+<div class="card">⭐⭐⭐⭐⭐<p class="muted">Perfect for gifting and parties. Amazing taste!</p></div>
+</div>
+</section>
+
+<section id="payment" style="display:none;">
+<h2>Payment</h2>
+<div class="card" style="max-width:650px;margin:auto">
+<h3>Pay Using UPI</h3>
+<p><b>Order Amount:</b> ₹<span id="paymentAmount">0</span></p>
+<p style="color:#bdb3ac">Please pay the exact amount shown above.</p>
+<p><b>Name:</b> Pankaj Tailor</p>
+<p><b>PhonePe / Google Pay:</b> <a class="upi" href="tel:+917740922672">7740922672</a></p>
+<a id="upiPay" class="btn" href="#">💳 Pay Exact ₹<span id="paymentAmountButton">0</span> via UPI</a>
+<label for="paymentRef" style="display:block;margin-top:15px"><b>UPI Transaction ID / UTR</b></label>
+<input id="paymentRef" type="text" placeholder="Enter UTR after successful payment"
+style="padding:14px;border-radius:9px;border:1px solid #4a382d;background:#0f0b09;color:#fff;font-size:16px;width:100%;margin-top:7px">
+<button type="button" class="btn" onclick="paymentDone()">Submit Payment for Verification</button>
+<p id="paymentMessage" style="text-align:center;color:#57ca8c;font-weight:bold;margin-top:12px"></p>
+<p class="muted" style="margin-top:10px;font-size:13px">Payment is not automatically marked as paid. The order remains pending until the received amount is verified.</p>
+</div>
+</section>
+
+<footer>© 2026 Brownie Junction</footer>
+
+<script>
+/*
+ Brownie Junction frontend payment flow.
+ IMPORTANT:
+ - The browser calculates the total from the fixed menu prices.
+ - The UPI link always contains that exact total.
+ - The browser never declares a payment "paid".
+ - Final payment verification must be performed by the backend/payment provider.
+*/
+
+const MENU = {
+  "KitKat Brownie": 140,
+  "Oreo Brownie": 140,
+  "Double Chocolate": 140,
+  "Triple Chocolate": 150,
+  "Mango Brownie": 169
+};
+
+let orders = JSON.parse(localStorage.getItem("bj_orders")) || [];
+let currentOrderIndex = -1;
+let currentTotal = 0;
+
+document.getElementById("orderForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const selected = document.getElementById("itemSelect").value.split("|");
+  const item = selected[0];
+  const priceFromForm = Number(selected[1]);
+  const qty = Number(document.getElementById("custQty").value);
+
+  // Never trust a price supplied by a modified page.
+  if (!Object.prototype.hasOwnProperty.call(MENU, item) ||
+      MENU[item] !== priceFromForm) {
+    alert("Invalid product price. Please refresh the page and try again.");
+    return;
+  }
+
+  if (!Number.isInteger(qty) || qty < 1 || qty > 50) {
+    alert("Please enter a valid quantity.");
+    return;
+  }
+
+  const total = MENU[item] * qty;
+  currentTotal = total;
+
+  document.getElementById("paymentAmount").innerText = total;
+  document.getElementById("paymentAmountButton").innerText = total;
+
+  // Exact amount is placed into the UPI payment request.
+  document.getElementById("upiPay").href =
+    "upi://pay?pa=pankajtailor6469@ybl&pn=Brownie%20Junction&am=" +
+    total.toFixed(2) + "&cu=INR";
+
+  const order = {
+    name: document.getElementById("custName").value.trim(),
+    phone: document.getElementById("custPhone").value.trim(),
+    item: item,
+    qty: qty,
+    address: document.getElementById("custAddress").value.trim(),
+    total_amount: total,
+    paid_amount: 0,
+    payment_status: "pending",
+    payment_reference: "",
+    date: new Date().toISOString(),
+    status: "Pending Payment Verification"
+  };
+
+  orders.push(order);
+  currentOrderIndex = orders.length - 1;
+  localStorage.setItem("bj_orders", JSON.stringify(orders));
+
+  document.getElementById("paymentRef").value = "";
+  document.getElementById("paymentMessage").innerText = "";
+  document.getElementById("payment").style.display = "block";
+
+  document.getElementById("success").innerText =
+    "✅ Order created. Pay exactly ₹" + total +
+    " and submit the UTR for verification.";
+
+  this.reset();
+  location.href = "#payment";
+});
+
+function paymentDone() {
+  if (currentOrderIndex < 0 || !currentTotal) {
+    document.getElementById("paymentMessage").innerText =
+      "❌ Please create an order first.";
+    return;
+  }
+
+  const reference = document.getElementById("paymentRef").value.trim();
+
+  if (!reference) {
+    document.getElementById("paymentMessage").innerText =
+      "❌ Please enter the UPI Transaction ID / UTR.";
+    return;
+  }
+
+  const order = orders[currentOrderIndex];
+
+  // Never accept a customer-supplied paid amount as proof.
+  order.paid_amount = 0;
+  order.payment_status = "pending";
+  order.payment_reference = reference;
+  order.status = "Payment Submitted - Awaiting Verification";
+
+  localStorage.setItem("bj_orders", JSON.stringify(orders));
+
+  document.getElementById("paymentMessage").innerText =
+    "✅ UTR submitted. The order will be confirmed only after the exact payment amount is verified.";
+
+  document.getElementById("success").innerText =
+    "⏳ Payment submitted for verification. The order is NOT confirmed yet.";
+}
+</script>
+</body>
+</html>
