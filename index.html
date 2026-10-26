@@ -154,15 +154,8 @@ style="padding:14px;border-radius:9px;border:1px solid #4a382d;background:#0f0b0
 <footer>© 2026 Brownie Junction</footer>
 
 <script>
-/*
- Brownie Junction frontend payment flow.
- IMPORTANT:
- - The browser calculates the total from the fixed menu prices.
- - The UPI link always contains that exact total.
- - The browser never declares a payment "paid".
- - Final payment verification must be performed by the backend/payment provider.
-*/
-
+const SUPABASE_URL = "https://tnzohekhvgegefcjnoda.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_QBup_mW8dOG5sYQmAsBeSA_B3mqbnRi";
 const MENU = {
   "KitKat Brownie": 140,
   "Oreo Brownie": 140,
@@ -171,101 +164,148 @@ const MENU = {
   "Mango Brownie": 169
 };
 
-let orders = JSON.parse(localStorage.getItem("bj_orders")) || [];
-let currentOrderIndex = -1;
+let currentOrderId = null;
 let currentTotal = 0;
+let orderInProgress = false;
+let referenceInProgress = false;
 
-document.getElementById("orderForm").addEventListener("submit", function(e) {
+async function callEdgeFunction(functionName, payload) {
+  let response;
+  try {
+    response = await fetch(SUPABASE_URL + "/functions/v1/" + functionName, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_PUBLISHABLE_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    throw new Error("Could not connect to the order service. Check your internet connection and try again.");
+  }
+  let result;
+  try {
+    result = await response.json();
+  } catch (error) {
+    throw new Error("The server returned an unreadable response. Please try again later.");
+  }
+  if (!response.ok) {
+    throw new Error(result && result.error ? result.error : "Request failed (HTTP " + response.status + "). Please try again.");
+  }
+  return result;
+}
+
+document.getElementById("orderForm").addEventListener("submit", async function(e) {
   e.preventDefault();
+  if (orderInProgress) return;
 
+  const name = document.getElementById("custName").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
   const selected = document.getElementById("itemSelect").value.split("|");
   const item = selected[0];
   const priceFromForm = Number(selected[1]);
-  const qty = Number(document.getElementById("custQty").value);
+  const quantity = Number(document.getElementById("custQty").value);
+  const address = document.getElementById("custAddress").value.trim();
+  const submitButton = this.querySelector('button[type="submit"]');
+  const success = document.getElementById("success");
 
-  // Never trust a price supplied by a modified page.
-  if (!Object.prototype.hasOwnProperty.call(MENU, item) ||
-      MENU[item] !== priceFromForm) {
-    alert("Invalid product price. Please refresh the page and try again.");
+  success.style.color = "#ff9d8f";
+  success.innerText = "";
+  if (!name || !phone || !address || !Object.prototype.hasOwnProperty.call(MENU, item) || MENU[item] !== priceFromForm) {
+    success.innerText = "Please check all order details and select a valid menu item.";
+    return;
+  }
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 50) {
+    success.innerText = "Please enter a quantity between 1 and 50.";
     return;
   }
 
-  if (!Number.isInteger(qty) || qty < 1 || qty > 50) {
-    alert("Please enter a valid quantity.");
-    return;
+  orderInProgress = true;
+  submitButton.disabled = true;
+  submitButton.textContent = "Creating order...";
+  try {
+    const result = await callEdgeFunction("create-order", {
+      name: name,
+      phone: phone,
+      address: address,
+      item: item,
+      quantity: quantity
+    });
+    if (!result.order_id || !Number.isFinite(Number(result.total_amount))) {
+      throw new Error("The order service did not return a valid order ID and total. Please contact us before paying.");
+    }
+
+    currentOrderId = result.order_id;
+    currentTotal = Number(result.total_amount);
+    document.getElementById("paymentAmount").innerText = currentTotal;
+    document.getElementById("paymentAmountButton").innerText = currentTotal;
+    document.getElementById("upiPay").href =
+      "upi://pay?pa=pankajtailor6469@ybl&pn=Brownie%20Junction&am=" + currentTotal.toFixed(2) + "&cu=INR";
+    document.getElementById("paymentRef").value = "";
+    document.getElementById("paymentMessage").innerText = "";
+    document.getElementById("paymentMessage").style.color = "#ff9d8f";
+    document.getElementById("payment").style.display = "block";
+    success.style.color = "#57ca8c";
+    success.innerText = "✅ Order created successfully. Order ID: " + currentOrderId +
+      ". Pay exactly ₹" + currentTotal + " and submit your UTR for verification.";
+    this.reset();
+    location.href = "#payment";
+  } catch (error) {
+    currentOrderId = null;
+    currentTotal = 0;
+    success.style.color = "#ff9d8f";
+    success.innerText = "❌ " + (error.message || "Could not create your order. Please try again.");
+  } finally {
+    orderInProgress = false;
+    submitButton.disabled = false;
+    submitButton.textContent = "Place Order";
   }
-
-  const total = MENU[item] * qty;
-  currentTotal = total;
-
-  document.getElementById("paymentAmount").innerText = total;
-  document.getElementById("paymentAmountButton").innerText = total;
-
-  // Exact amount is placed into the UPI payment request.
-  document.getElementById("upiPay").href =
-    "upi://pay?pa=pankajtailor6469@ybl&pn=Brownie%20Junction&am=" +
-    total.toFixed(2) + "&cu=INR";
-
-  const order = {
-    name: document.getElementById("custName").value.trim(),
-    phone: document.getElementById("custPhone").value.trim(),
-    item: item,
-    qty: qty,
-    address: document.getElementById("custAddress").value.trim(),
-    total_amount: total,
-    paid_amount: 0,
-    payment_status: "pending",
-    payment_reference: "",
-    date: new Date().toISOString(),
-    status: "Pending Payment Verification"
-  };
-
-  orders.push(order);
-  currentOrderIndex = orders.length - 1;
-  localStorage.setItem("bj_orders", JSON.stringify(orders));
-
-  document.getElementById("paymentRef").value = "";
-  document.getElementById("paymentMessage").innerText = "";
-  document.getElementById("payment").style.display = "block";
-
-  document.getElementById("success").innerText =
-    "✅ Order created. Pay exactly ₹" + total +
-    " and submit the UTR for verification.";
-
-  this.reset();
-  location.href = "#payment";
 });
 
-function paymentDone() {
-  if (currentOrderIndex < 0 || !currentTotal) {
-    document.getElementById("paymentMessage").innerText =
-      "❌ Please create an order first.";
+async function paymentDone() {
+  const message = document.getElementById("paymentMessage");
+  const button = document.querySelector('#payment button[onclick="paymentDone()"]');
+  if (!currentOrderId || !currentTotal) {
+    message.style.color = "#ff9d8f";
+    message.innerText = "❌ Please create an order first.";
     return;
   }
+  if (referenceInProgress) return;
 
   const reference = document.getElementById("paymentRef").value.trim();
-
   if (!reference) {
-    document.getElementById("paymentMessage").innerText =
-      "❌ Please enter the UPI Transaction ID / UTR.";
+    message.style.color = "#ff9d8f";
+    message.innerText = "❌ Please enter the UPI Transaction ID / UTR.";
+    return;
+  }
+  if (!/^[A-Za-z0-9]{6,40}$/.test(reference)) {
+    message.style.color = "#ff9d8f";
+    message.innerText = "❌ Enter a valid UTR containing 6–40 letters or numbers, without spaces or symbols.";
     return;
   }
 
-  const order = orders[currentOrderIndex];
-
-  // Never accept a customer-supplied paid amount as proof.
-  order.paid_amount = 0;
-  order.payment_status = "pending";
-  order.payment_reference = reference;
-  order.status = "Payment Submitted - Awaiting Verification";
-
-  localStorage.setItem("bj_orders", JSON.stringify(orders));
-
-  document.getElementById("paymentMessage").innerText =
-    "✅ UTR submitted. The order will be confirmed only after the exact payment amount is verified.";
-
-  document.getElementById("success").innerText =
-    "⏳ Payment submitted for verification. The order is NOT confirmed yet.";
+  referenceInProgress = true;
+  button.disabled = true;
+  button.textContent = "Submitting reference...";
+  message.innerText = "";
+  try {
+    const result = await callEdgeFunction("submit-payment-reference", {
+      order_id: currentOrderId,
+      payment_reference: reference
+    });
+    message.style.color = "#57ca8c";
+    message.innerText = "✅ " + (result.message || "UTR submitted for verification. Payment is still pending.");
+    document.getElementById("success").style.color = "#ffbd3d";
+    document.getElementById("success").innerText =
+      "⏳ UTR submitted. Your order is NOT confirmed until the payment amount is verified.";
+  } catch (error) {
+    message.style.color = "#ff9d8f";
+    message.innerText = "❌ " + (error.message || "Could not submit the UTR. Please try again.");
+  } finally {
+    referenceInProgress = false;
+    button.disabled = false;
+    button.textContent = "Submit Payment for Verification";
+  }
 }
 </script>
 </body>
